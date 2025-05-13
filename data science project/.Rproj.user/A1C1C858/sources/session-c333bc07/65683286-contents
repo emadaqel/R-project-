@@ -1,0 +1,69 @@
+library(readxl)
+library(dplyr)
+library(ggplot2)
+usethis::create_from_github("emadaqel/r-group-project")
+usethis::edit_r_environ()
+Sys.getenv("GITHUB_PAT")
+#import dataset 
+imported_dataset<-read.csv("C:/Desktop2.0/Data Science Programming/diabetes+130-us+hospitals+for+years+1999-2008/diabetic_data.csv")
+print(imported_dataset)
+# Check the structure of the dataset
+str(imported_dataset)
+#check for the statistics of the dataset
+numeric_columns <- sapply(imported_dataset, is.numeric)
+print(numeric_columns)
+numeric_stats<-data.frame(
+  mean = sapply(imported_dataset[, numeric_columns], mean),
+  median = sapply(imported_dataset[, numeric_columns], median),
+  sd = sapply(imported_dataset[, numeric_columns], sd),
+  min = sapply(imported_dataset[, numeric_columns], min),
+  max = sapply(imported_dataset[, numeric_columns], max),
+  var= sapply(imported_dataset[, numeric_columns], var)
+)
+print(numeric_stats)
+#check for the missing values
+any(is.na(imported_dataset))
+names(imported_dataset)[colSums(is.na(imported_dataset)) > 0]
+col_sums <- colSums(is.na(imported_dataset))
+print(colsums)
+sum(is.na(imported_dataset))
+# Count how often '?' appears
+sapply(imported_dataset, function(x) sum(x == '?', na.rm = TRUE))
+# convert '?' to NA
+imported_dataset[imported_dataset == '?'] <- NA
+# Check for missing values again 
+any(is.na(imported_dataset))
+names(imported_dataset)[colSums(is.na(imported_dataset)) > 0]
+col_sums <- colSums(is.na(imported_dataset))
+print(colsums)
+sum(is.na(imported_dataset))
+#handle missing values
+# Select specific columns and drop rows with missing values in certain columns
+cleaned_imported_dataset <- imported_dataset %>%
+  select(-weight, -payer_code, -medical_specialty) %>% # Remove unwanted columns
+  filter(
+    !is.na(race) &
+      !is.na(diag_1) &
+      !is.na(diag_2) &
+      !is.na(diag_3)
+  )
+cleaned_imported_dataset
+sum(is.na(cleaned_imported_dataset))
+str(cleaned_imported_dataset)
+#check for the duplicates
+duplicates <- duplicated(imported_dataset)
+print(duplicates)
+duplicates_count <- sum(duplicates)
+print(duplicates_count)
+#scale imported data 
+z_score <- scale(numeric_columns)
+print(z_score)
+#check for the outliers
+outliers <- cleaned_imported_dataset[apply(abs(z_score) > 3, 1, any),]
+print(outliers)
+#t-test 
+
+
+
+
+
